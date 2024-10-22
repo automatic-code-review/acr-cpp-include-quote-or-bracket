@@ -36,6 +36,9 @@ def __review_by_file(message_incorrect_path, message_incorrect_prefix, path, pat
         if not line.startswith("#include "):
             continue
 
+        if line.endswith('.moc"'):
+            continue
+
         comments.extend(__review_by_line(
             line=line,
             message_incorrect_path=message_incorrect_path,
@@ -108,8 +111,8 @@ def __review_quote_is_ok(line, path, message_incorrect_path, path_source, messag
             comment_path=comment_path,
             comment_description=comment_description,
             comment_snipset=True,
-            comment_end_line=1,
-            comment_start_line=1,
+            comment_end_line=line_number,
+            comment_start_line=line_number,
             comment_language='c++',
         ))
 
