@@ -3,7 +3,7 @@ import automatic_code_review_commons as commons
 
 
 def review(config):
-    path_source = config['path_source']
+    path_source = config['path_source_v2']
     changes = config['merge']['changes']
     message_incorrect_path = config['messageIncorrectPath']
     message_incorrect_prefix = config['messageIncorrectPrefix']
