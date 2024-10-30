@@ -1,4 +1,6 @@
 import os
+import re
+
 import automatic_code_review_commons as commons
 
 
@@ -22,9 +24,26 @@ def review(config):
     return comments
 
 
+def __check_regex_list(regex_list, text):
+    for regex in regex_list:
+        if re.match(regex, text):
+            return True
+
+    return False
+
+
 def __review_by_file(message_incorrect_path, message_incorrect_prefix, path, path_source):
     with open(path, 'r') as arquivo:
         lines = arquivo.readlines()
+
+    regex_list_to_ignore = [".*ui_.*", ".*\.moc"]
+
+    if path.endswith(".cpp"):
+        header_file = path.split("/")
+        header_file = header_file[len(header_file) - 1]
+        header_file = header_file.replace(".cpp", ".h")
+        regex_list_to_ignore.insert(0, f"#include \"{header_file}\"")
+        regex_list_to_ignore.insert(0, f"#include \".*/{header_file}\"")
 
     comments = []
     line_number = 0
@@ -36,7 +55,7 @@ def __review_by_file(message_incorrect_path, message_incorrect_prefix, path, pat
         if not line.startswith("#include "):
             continue
 
-        if line.endswith('.moc"'):
+        if __check_regex_list(regex_list_to_ignore, line):
             continue
 
         comments.extend(__review_by_line(
